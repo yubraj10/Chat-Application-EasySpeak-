@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final String recipientEmail;
@@ -14,8 +14,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _authService = AuthService();
   late final String _chatRoomId;
   String? _currentUserFullName;
   bool _isLoading = true;
@@ -23,44 +22,38 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _chatRoomId = getChatRoomId(_auth.currentUser!.email!, widget.recipientEmail);
+    _chatRoomId = _authService.getChatRoomId(
+        _authService.currentUser!.email!, widget.recipientEmail);
     _getCurrentUserFullName();
   }
 
   Future<void> _getCurrentUserFullName() async {
-    try {
-      final currentUser = _auth.currentUser!;
-      final userDoc = await _firestore.collection('users').doc(currentUser.uid).get();
+    final fullName = await _authService.fetchUserFullName();
+    if (fullName != null) {
       setState(() {
-        _currentUserFullName = userDoc['fullname'];
+        _currentUserFullName = fullName;
         _isLoading = false;
       });
-    } catch (e) {
+    } else {
       setState(() {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching user data: $e')),
+        const SnackBar(content: Text('Error fetching user data')),
       );
     }
-  }
-
-  String getChatRoomId(String userA, String userB) {
-    return userA.hashCode <= userB.hashCode
-        ? '$userA-$userB'
-        : '$userB-$userA';
   }
 
   Future<void> _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       String messageText = _messageController.text;
-      _messageController.clear(); // Clear the text field immediately
+      _messageController.clear(); 
 
-      await _firestore.collection('chat_rooms').doc(_chatRoomId).collection('messages').add({
-        'text': messageText,
-        'sender': _currentUserFullName,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      await _authService.sendMessage(
+        chatRoomId: _chatRoomId,
+        messageText: messageText,
+        senderName: _currentUserFullName!,
+      );
     }
   }
 
@@ -71,12 +64,12 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Text(widget.recipientFullName),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: _firestore
+              stream: FirebaseFirestore.instance
                   .collection('chat_rooms')
                   .doc(_chatRoomId)
                   .collection('messages')
@@ -84,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 var messages = snapshot.data!.docs;
@@ -98,8 +91,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     return Align(
                       alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
                           color: isSender ? Colors.blue : Colors.grey[300],
                           borderRadius: BorderRadius.circular(20),
@@ -116,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
@@ -124,7 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Type a message...',
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -132,7 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                   color: Colors.blue,
                 ),

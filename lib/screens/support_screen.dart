@@ -8,7 +8,7 @@ class SupportScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text(
+        title: const Text(
           'Contact Support',
           style: TextStyle(color: Colors.white),
         ),
@@ -22,7 +22,7 @@ class SupportScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
@@ -35,7 +35,7 @@ class SupportScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "Please send an email with your query to Ukgamin2468@gmail.com. We will respond to your inquiry as soon as possible.",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -44,19 +44,19 @@ class SupportScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton.icon(
                     onPressed: () {
                       // Implement email functionality here
                     },
-                    icon: Icon(Icons.email),
-                    label: Text('Send Email'),
+                    icon: const Icon(Icons.email),
+                    label: const Text('Send Email'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     ),
                   ),
                 ],

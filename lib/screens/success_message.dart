@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:online_chatapplication/screens/login_screen.dart';
+import 'package:online_chatapplication/widgets/buttons.dart';
+
+import '../widgets/container.dart';
 
 class SuccessMessageScreen extends StatelessWidget {
   const SuccessMessageScreen({
@@ -14,8 +19,6 @@ class SuccessMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    precacheImage(const AssetImage("assets/background5.jpg"), context);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -35,23 +38,11 @@ class SuccessMessageScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
+              child: buildContainer(
+                width: MediaQuery.of(context).size.width* 0.85,
                 padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Ensure the column only takes necessary space
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       title,
@@ -65,25 +56,7 @@ class SuccessMessageScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20.0),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        onPressed: onPressed,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.0),
-                          child: Text(
-                            'Continue',
-                            style: TextStyle(fontSize: 16.0,color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
+                    buildElevatedButton(label: 'Continue', onPressed: ()=> Get.off(()=> LoginScreen()))
                   ],
                 ),
               ),

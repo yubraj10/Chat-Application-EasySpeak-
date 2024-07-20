@@ -14,7 +14,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _onboardingData = [
     {
-      'title': 'Welcome to ChatApp',
+      'title': 'Welcome to EasySpeak',
       'description': 'Stay connected with your friends and family.',
       'animation': 'assets/animation1.json', // Update with your animation file
     },
@@ -116,29 +116,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: _currentIndex == _onboardingData.length - 1
-                  ? _onDone
-                  : () {
-                _pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeIn,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: ElevatedButton(
+                onPressed: _currentIndex == _onboardingData.length - 1
+                    ? _onDone
+                    : () {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeIn,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-              ),
-              child: Text(
-                _currentIndex == _onboardingData.length - 1
-                    ? 'Get Started'
-                    : 'Next',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.blue,
+                child: Text(
+                  _currentIndex == _onboardingData.length - 1
+                      ? 'Get Started'
+                      : 'Next',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
